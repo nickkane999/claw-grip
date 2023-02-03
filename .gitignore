@@ -4,7 +4,7 @@
 /client-old/
 
 /client/node_modules
-/server/node_modules
+/api/node_modules
 /client/.pnp
 /client/.pnp.js
 
@@ -22,7 +22,7 @@
 .DS_Store
 *.pem
 /client/misc
-/server/.env
+/api/.env
 # debug
 npm-debug.log*
 yarn-debug.log*
