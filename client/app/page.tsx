@@ -2,8 +2,9 @@ import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "./page.module.scss";
 const inter = Inter({ subsets: ["latin"] });
-import { rule } from "../src/data/main";
 
+/*
+import { rule } from "../src/data/main";
 let name: rule = {
   name: "name",
   type: "string",
@@ -11,8 +12,8 @@ let name: rule = {
   description: "name of the rule",
   idsz: "name",
 };
-
 console.log(name);
+*/
 
 export default function Home() {
   return (
