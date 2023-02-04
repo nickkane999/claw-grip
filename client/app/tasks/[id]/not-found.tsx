@@ -1,7 +1,9 @@
+import React from "react";
+
 function Page() {
   return (
     <div>
-      <h1>Results</h1>
+      <h1>Page was not found</h1>
     </div>
   );
 }

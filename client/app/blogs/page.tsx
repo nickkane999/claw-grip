@@ -1,7 +1,7 @@
 function Page() {
   return (
     <div>
-      <h1>Results</h1>
+      <h1>View Blogs</h1>
     </div>
   );
 }

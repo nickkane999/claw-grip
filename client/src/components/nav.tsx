@@ -17,6 +17,12 @@ function nav() {
           <a href="/profile">Profile</a>
         </li>
         <li>
+          <a href="/blogs">Blogs</a>
+        </li>
+        <li>
+          <a href="/tasks">Tasks</a>
+        </li>
+        <li>
           <a href="/login">Login</a>
         </li>
       </ul>
