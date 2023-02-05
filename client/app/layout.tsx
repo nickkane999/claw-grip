@@ -1,6 +1,6 @@
 import "./globals.scss";
-import "../components/nav.scss";
-import Nav from "../components/nav";
+import "../src/components/nav.scss";
+import Nav from "../src/components/nav";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

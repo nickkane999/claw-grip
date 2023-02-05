@@ -8,13 +8,16 @@ function nav() {
           <a href="/">Home</a>
         </li>
         <li>
-          <a href="/services">Services</a>
+          <a href="/results">Results</a>
         </li>
         <li>
-          <a href="/about">About</a>
+          <a href="/scripts">Scripts</a>
         </li>
         <li>
-          <a href="/contact">Contact</a>
+          <a href="/profile">Profile</a>
+        </li>
+        <li>
+          <a href="/login">Login</a>
         </li>
       </ul>
     </nav>
