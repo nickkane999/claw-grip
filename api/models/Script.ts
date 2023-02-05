@@ -5,13 +5,20 @@ export interface Script {
   script: string;
   createdAt: string;
   updatedAt: string;
+  user: string;
 }
 
 export interface ScriptsModel extends Script, Document {}
 
 const ScriptsSchema: Schema = new Schema(
-  { name: { type: String, required: true }, script: { type: String, required: true }, createdAt: { type: String, required: true }, updatedAt: { type: String, required: true } },
+  {
+    name: { type: String, required: true },
+    script: { type: String, required: true },
+    createdAt: { type: String, required: true },
+    updatedAt: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+  },
   { versionKey: false }
 );
 
-export default mongoose.model<Script>("Scripts", ScriptsSchema);
+export default mongoose.model<Script>("Script", ScriptsSchema);

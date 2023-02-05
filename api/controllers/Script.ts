@@ -3,16 +3,17 @@ import mongoose from "mongoose";
 import Script from "../models/Script";
 import Logging from "../library/Logging";
 
-const createScripts = (req: Request, res: Response, next: NextFunction) => {
-  const { name, script } = req.body;
-  const scripts = new Script({
+const createScript = (req: Request, res: Response, next: NextFunction) => {
+  const { name, script, userId } = req.body;
+  const newScript = new Script({
     _id: new mongoose.Types.ObjectId(),
     name,
     script,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    user: userId,
   });
-  scripts
+  newScript
     .save()
     .then((result) => {
       Logging.info(`Saving Script to database: ${script}`);
@@ -95,4 +96,4 @@ const deleteScript = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export default { createScripts, readScript, readAllScripts, updateScript, deleteScript };
+export default { createScript, readScript, readAllScripts, updateScript, deleteScript };

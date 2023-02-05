@@ -3,7 +3,7 @@ import controller from "../controllers/Script";
 
 const router = express.Router();
 
-router.post("/create", controller.createScripts);
+router.post("/create", controller.createScript);
 router.get("/get", controller.readAllScripts);
 router.get("/get/:scriptId", controller.readScript);
 router.patch("/update/:scriptId", controller.updateScript);
