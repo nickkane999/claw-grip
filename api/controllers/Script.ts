@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import Script from "../models/Script";
+import User from "../models/User";
 import Logging from "../library/Logging";
 
 const createScript = (req: Request, res: Response, next: NextFunction) => {
@@ -60,6 +61,30 @@ const readAllScripts = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
+const readScriptsByUser = (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.userId;
+  const user = User.findById(id);
+  User.findById(id, (err: any, user: any) => {
+    if (err || !user) {
+      Logging.info(`Could not find any scripts from user: ${id}`);
+      res.status(404).json({ message: `Could not find any scripts from user: ${id}` });
+      return;
+    } else {
+      return Script.find({ user: id })
+        .sort({ createdDate: -1 })
+        .then((scripts) => {
+          Logging.info(`Reading all Scripts from user: ${scripts}`);
+          if (scripts) {
+            res.status(200).json(scripts);
+          } else {
+            res.status(404).json({ message: "No valid entry found for provided ID" });
+          }
+        });
+    }
+  });
+  return;
+};
+
 const updateScript = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.scriptId;
   return Script.findById(id).then((script) => {
@@ -96,4 +121,4 @@ const deleteScript = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export default { createScript, readScript, readAllScripts, updateScript, deleteScript };
+export default { createScript, readScript, readAllScripts, readScriptsByUser, updateScript, deleteScript };
