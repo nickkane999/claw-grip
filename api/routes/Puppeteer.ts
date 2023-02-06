@@ -1,7 +1,7 @@
 import express from "express";
-import controller from "../controllers/puppeteer/Basic";
+import controller from "../controllers/puppeteer/ClawGrip";
 const router = express.Router();
 
-router.get("/basic", controller.basicLoad);
+router.get("/process", controller.process);
 
 export default router;
