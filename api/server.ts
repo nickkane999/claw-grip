@@ -8,6 +8,7 @@ import Logging from "./library/Logging";
 
 import scriptRoutes from "./routes/Script";
 import userRoutes from "./routes/User";
+import puppeteerRoutes from "./routes/Puppeteer";
 
 // Connect to MongoDB
 const MongoClient = mongodb.MongoClient;
@@ -51,6 +52,7 @@ app.use((req: any, res: any, next: any) => {
 
 app.use("/scripts", scriptRoutes);
 app.use("/users", userRoutes);
+app.use("/puppeteer", puppeteerRoutes);
 
 app.get("/ping", (req: any, res: any) => res.status(200).send("pong"));
 

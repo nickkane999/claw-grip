@@ -12,9 +12,7 @@ const getUsers = async () => {
 };
 
 async function Page() {
-  let id = "63dfbae7543add2e09c9b9db";
   let user = await getUsers();
-  console.log(user);
 
   if (!user || Object.keys(user).length < 1) {
     return notFound();

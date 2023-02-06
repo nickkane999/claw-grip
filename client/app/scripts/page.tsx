@@ -10,7 +10,6 @@ const getScripts = async () => {
 
 async function Page() {
   let scripts = await getScripts();
-  console.log(scripts);
 
   if (!scripts || Object.keys(scripts).length < 1) {
     return notFound();
