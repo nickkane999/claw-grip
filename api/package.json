@@ -2,10 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "build": "rm -rf build && tsc",
-    "start": "node build/index.js",
+    "start": "node build/index.ts",
     "dev": "nodemon index.ts"
   },
   "author": "",

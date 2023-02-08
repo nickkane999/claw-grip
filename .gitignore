@@ -20,12 +20,17 @@
 # production
 /client/build
 
+
+# API
+/api/.env
+/api/requests/scripts/*
+
 # misc
 .DS_Store
 *.pem
 /client/misc
 /misc
-/api/.env
+
 # debug
 npm-debug.log*
 yarn-debug.log*

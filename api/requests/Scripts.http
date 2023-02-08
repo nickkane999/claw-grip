@@ -1,0 +1,25 @@
+// User Requests
+
+GET http://localhost:5000/scripts/get
+GET http://localhost:5000/scripts/get/script/63dfee0d65e9788ce6a49c36
+GET http://localhost:5000/scripts/get/user/63dfbae7543add2e09c9b9db
+DELETE http://localhost:5000/scripts/delete/63e00d55c980417235fb307a
+
+
+POST http://localhost:5000/scripts/create
+Content-Type: application/json
+
+{
+    "name": "My fourth script",
+    "script": "Sample 4",
+    "userId": "63dfbae7543add2e09c9b9db"
+}
+
+PATCH http://localhost:5000/scripts/update/63e30d1b980020010bfa340c
+Content-Type: application/json
+
+{
+    "name": "My Script Updated",
+    "script": "An update script"
+}
+

@@ -5,7 +5,12 @@ import { selectButtonParams, pullTextParams, pullTextListParams } from "./ClawGr
 
 //console.log(req.body);
 
-const selectButton = async (req: Request, res: Response, next: NextFunction, data: selectButtonParams, info: PuppeteerInfoInput): Promise<PuppeteerInfoOutput> => {
+function sleep(ms) {
+  const end = new Date().getTime() + ms;
+  while (new Date().getTime() <= end) {}
+}
+
+const selectButton = async (req: Request, res: Response, next: NextFunction, data: selectButtonParams, info: PuppeteerInfoInput) => {
   Logging.info(`Processing Select Button Function`);
   const { selector, url } = data;
   const { browser, page } = info;
@@ -21,15 +26,21 @@ const selectButton = async (req: Request, res: Response, next: NextFunction, dat
   return { browser, page, result: false };
 };
 
-const pullText = async (req: Request, res: Response, next: NextFunction, data: pullTextParams, info: PuppeteerInfoInput): Promise<PuppeteerInfoOutput> => {
+const pullContent = async (req: Request, res: Response, next: NextFunction, data: pullTextParams, info: PuppeteerInfoInput) => {
+  Logging.info(`Showing data: ${data}`);
   Logging.info(`Processing Pull Text Function`);
-  const { selector, url } = data;
+  const { selector, url, format, attribute } = data;
   const { browser, page } = info;
   url && (await page.goto(url));
 
   const textSection = await page.waitForSelector(selector);
   if (textSection) {
-    const text = await page.evaluate((element) => element.textContent, textSection);
+    const text = await page.evaluate((element) => {
+      if (format === "text") return element.textContent;
+      else {
+        if (attribute && element.hasAttribute(attribute)) return element.getAttribute("src");
+      }
+    }, textSection);
     Logging.info(`Processed page and got this result: ${text}`);
     const url = await page.url();
     return { browser, page, result: [url, text] };
@@ -37,27 +48,52 @@ const pullText = async (req: Request, res: Response, next: NextFunction, data: p
   return { browser, page, result: false };
 };
 
-const pullTextList = async (req: Request, res: Response, next: NextFunction, data: pullTextListParams, info: PuppeteerInfoInput): Promise<PuppeteerInfoOutput> => {
-  Logging.info(`Processing Pull Text List Function`);
-  const { selector, url } = data;
+const pullContentAll = async (req: Request, res: Response, next: NextFunction, data: pullTextListParams, info: PuppeteerInfoInput) => {
+  const { selector, url, format, attribute } = data;
   const { browser, page } = info;
   url && (await page.goto(url));
+  console.log("My format");
+  console.log(format);
 
   const textSection = await page.waitForSelector(selector);
-  if (textSection) {
-    const text = await page.evaluate((element) => element.textContent, textSection);
-    Logging.info(`Processed page and got this result: ${text}`);
+  const elements = await page.$$(selector);
+  if (elements.length) {
+    const text = await Promise.all(
+      elements.map(async (element) => {
+        return await page.evaluate(
+          (el, format, attribute) => {
+            console.log(format);
+            if (format === "text") return el.textContent;
+            else {
+              if (attribute && el.hasAttribute(attribute)) return el.getAttribute(attribute);
+            }
+          },
+          element,
+          format,
+          attribute
+        );
+      })
+    );
+    Logging.info(`Processed page and got these results: ${text}`);
     const url = await page.url();
     return { browser, page, result: [url, text] };
   }
   return { browser, page, result: false };
 };
 
-type Functions = {
-  selectButton: (req: Request, res: Response, next: NextFunction, data: selectButtonParams, info: PuppeteerInfoInput) => Promise<PuppeteerInfoOutput>;
-  pullText: (req: Request, res: Response, next: NextFunction, data: pullTextParams, info: PuppeteerInfoInput) => Promise<PuppeteerInfoOutput>;
-  pullTextList: (req: Request, res: Response, next: NextFunction, data: pullTextListParams, info: PuppeteerInfoInput) => Promise<PuppeteerInfoOutput>;
+const pullPageHTML = async (req: Request, res: Response, next: NextFunction, data: pullTextParams, info: PuppeteerInfoInput) => {
+  Logging.info(`Processing Pull HTML Function`);
+  const { url } = data;
+  const { browser, page } = info;
+  await page.waitForSelector("body");
+  url && (await page.goto(url));
+
+  const html = await page.evaluate(() => document.documentElement.outerHTML);
+  Logging.info(`Processed page and got this result: ${html}`);
+  const pageUrl = await page.url();
+  return { browser, page, result: [pageUrl, html] };
 };
+
 type PuppeteerInfoInput = {
   browser: Browser;
   page: Page;
@@ -65,12 +101,13 @@ type PuppeteerInfoInput = {
 type PuppeteerInfoOutput = {
   browser: Browser;
   page: Page;
-  result: boolean | null | [string, string | boolean | null];
+  result: boolean | null | [string, any];
 };
-const functions: Functions = {
+const functions = {
   selectButton,
-  pullText,
-  pullTextList,
+  pullContent,
+  pullContentAll,
+  pullPageHTML,
 };
 
 const process = async (req: Request, res: Response, next: NextFunction) => {
@@ -79,19 +116,17 @@ const process = async (req: Request, res: Response, next: NextFunction) => {
   const page = await browser.newPage();
   const info = { browser, page };
   //console.log("I am here1");
-  let results = [];
+  let results: any = [];
 
   for (const action of actions) {
-    const { type, selector, url }: { type: string; selector: string; url: string } = action;
+    const { type, selector, url, format, attribute } = action;
     url && (await page.goto(url));
 
-    /* allow typescript bellow */
-    // @ts-ignore
-    let actionResult = await functions[type](req, res, next, action, info);
-    results.push(actionResult.result);
+    let actionResult = (await functions[type](req, res, next, action, info)) as PuppeteerInfoOutput;
+    actionResult.result && results.push(actionResult.result);
   }
   await browser.close();
   return res.status(404).json({ result: results });
 };
 
-export default { selectButton, pullText, pullTextList, process };
+export default { selectButton, pullContent, pullContentAll, process };
