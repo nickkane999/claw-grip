@@ -53,6 +53,7 @@ app.use((req: any, res: any, next: any) => {
 app.use("/scripts", scriptRoutes);
 app.use("/users", userRoutes);
 app.use("/puppeteer", puppeteerRoutes);
+app.use(express.static("data"));
 
 app.get("/ping", (req: any, res: any) => res.status(200).send("pong"));
 
