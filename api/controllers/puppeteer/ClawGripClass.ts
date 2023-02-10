@@ -126,7 +126,7 @@ class ClawGrip {
       let count = 0;
 
       for (const link of linkList) {
-        let newLink = baseUrl + link;
+        let newLink = !baseUrl ? link : baseUrl + link;
         //link && ((await page.goto(newLink)) as Page);
         loopAction.url = newLink;
         let actionResult = (await this[loopAction.type](loopAction)) as PuppeteerInfoOutput;

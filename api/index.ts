@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongodb = require("mongodb");
 const mongoose = require("mongoose");
 const http = require("http");
+const path = require("path");
 require("dotenv").config();
 import Logging from "./library/Logging";
 
@@ -56,6 +57,15 @@ app.use("/puppeteer", puppeteerRoutes);
 app.use(express.static("data"));
 
 app.get("/ping", (req: any, res: any) => res.status(200).send("pong"));
+
+app.use("/", (req: any, res: any, next: any) => {
+  const filePath = path.join(__dirname, "pages", "home.html");
+  res.sendFile(filePath, function (error) {
+    if (error) {
+      return res.status(404).json({ message: error.message });
+    }
+  });
+});
 
 app.use((req: any, res: any, next: any) => {
   const error = new Error("Not found");
