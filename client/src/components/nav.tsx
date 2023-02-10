@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getCookie, clearLogin } from "../util/cookies";
 import "./nav.scss";
 
 function nav() {
-  const [isLoggedIn, setIsLoggedIn] = useState(getCookie("loginInfo") ? true : false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const isLoggedIn = getCookie("loginInfo");
+    console.log("isLoggedIn from effect", isLoggedIn);
+    isLoggedIn ? setIsLoggedIn(true) : setIsLoggedIn(false);
+  }, [isLoggedIn]);
 
   const logOff = () => {
     clearLogin();
