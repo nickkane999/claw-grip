@@ -8,6 +8,7 @@ import { Schemas, ValidateSchema } from "../middleware/ValidateSchema";
 const router = express.Router();
 
 router.post("/create", controller.createUser);
+router.post("/login", controller.loginUser);
 router.get("/get", controller.readAllUsers);
 router.get("/get/:userId", controller.readUser);
 router.patch("/update/:userId", controller.updateUser);

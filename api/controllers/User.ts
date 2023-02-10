@@ -3,17 +3,17 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "../models/User";
 import Logging from "../library/Logging";
+import { generateToken } from "../library/token";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
-  const { username, email, password, confirmPassword } = req.body;
+  const { username, email, password, passwordConfirm } = req.body;
   const newUser = await User.findOne({ username });
-  const newDate = new Date().toISOString();
   if (newUser) {
     Logging.error("User provided a duplicate user name, will not create the account");
-    res.status(404).json({ message: "You provided a duplicate username, please try again with a different username" });
+    res.status(404).json({ error: "You provided a duplicate username, please try again with a different username" });
     return;
   }
-  if (password === confirmPassword) {
+  if (password === passwordConfirm) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newDate = new Date().toISOString();
     const newUser = new User({
@@ -26,13 +26,35 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const user = await newUser.save();
     Logging.info(`Saving user to database: ${user}`);
     res.status(201).json({
-      message: "Handling POST requests to /users",
-      createdUser: user,
+      user,
+      token: generateToken(user),
     });
     return;
   } else {
-    res.status(500).json({ error: Error("Passwords don't match") });
+    res.status(500).json({ error: "passwords do not match" });
   }
+};
+
+const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+  const { username, password } = req.body;
+  const user: any = await User.findOne({ username }).select("+password");
+
+  if (!user) {
+    throw new Error("Invalid credentials");
+  }
+  console.log(user);
+
+  const passwordIsValid = await bcrypt.compare(password, user.password);
+
+  console.log(passwordIsValid);
+  if (!passwordIsValid) {
+    throw new Error("Invalid credentials");
+  }
+
+  res.status(201).json({
+    user,
+    token: generateToken(user),
+  });
 };
 
 const readUser = (req: Request, res: Response, next: NextFunction) => {
@@ -114,4 +136,4 @@ const deleteUser = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export default { createUser, readUser, readAllUsers, updateUser, deleteUser };
+export default { createUser, readUser, readAllUsers, updateUser, deleteUser, loginUser };
