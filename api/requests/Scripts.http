@@ -15,11 +15,11 @@ Content-Type: application/json
     "userId": "63dfbae7543add2e09c9b9db"
 }
 
-PATCH http://localhost:5000/scripts/update/63e30d1b980020010bfa340c
+PATCH http://localhost:5000/scripts/update/63dfee0d65e9788ce6a49c36
 Content-Type: application/json
 
 {
     "name": "My Script Updated",
-    "script": "An update script"
+    "script": "An update script2"
 }
 

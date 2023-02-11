@@ -15,7 +15,7 @@ async function Page({ params: { id } }: any) {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>{script.name}</h1>
       <p>{script.script}</p>
     </div>

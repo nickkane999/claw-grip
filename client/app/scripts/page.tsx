@@ -16,7 +16,7 @@ async function Page() {
   }
 
   return (
-    <div className="scripts">
+    <div className="scripts container">
       <h1>Scripts</h1>
       {scripts.map((script: any) => {
         return (

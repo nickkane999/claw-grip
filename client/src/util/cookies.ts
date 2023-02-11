@@ -16,7 +16,7 @@ function setCookie(cookie: cookieInput) {
 }
 
 // Getting a cookie
-function getCookie(name: string) {
+function getCookie(name: string): any {
   var nameEQ = name + "=";
   var ca = document.cookie.split(";");
   for (var i = 0; i < ca.length; i++) {

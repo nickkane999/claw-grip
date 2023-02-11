@@ -14,7 +14,7 @@ const testScript = async () => {
 
 function Page() {
   return (
-    <div>
+    <div className="container">
       <h1>Results</h1>
       <button onClick={testScript}>Test</button>
       <h2>Test results:</h2>

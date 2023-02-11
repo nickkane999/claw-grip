@@ -58,7 +58,7 @@ app.use(express.static("data"));
 
 app.get("/ping", (req: any, res: any) => res.status(200).send("pong"));
 
-app.use("/", (req: any, res: any, next: any) => {
+app.get("/", (req: any, res: any, next: any) => {
   const filePath = path.join(__dirname, "pages", "home.html");
   res.sendFile(filePath, function (error) {
     if (error) {

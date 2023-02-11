@@ -32,7 +32,7 @@ const readScript = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.scriptId;
   return Script.findById(id)
     .then((script) => {
-      Logging.info(`Reading Script from database: ${script}`);
+      Logging.info(`Reading Script from database: ${id}`);
       if (script) {
         res.status(200).json(script);
       } else {
@@ -48,7 +48,7 @@ const readScript = (req: Request, res: Response, next: NextFunction) => {
 const readAllScripts = (req: Request, res: Response, next: NextFunction) => {
   Script.find()
     .then((scripts) => {
-      Logging.info(`Reading all Scripts from database: ${scripts}`);
+      Logging.info(`Reading all Scripts from database`);
       if (scripts) {
         res.status(200).json(scripts);
       } else {
@@ -73,7 +73,7 @@ const readScriptsByUser = (req: Request, res: Response, next: NextFunction) => {
       return Script.find({ user: id })
         .sort({ createdDate: -1 })
         .then((scripts) => {
-          Logging.info(`Reading all Scripts from user: ${scripts}`);
+          Logging.info(`Reading all Scripts from user: ${id}`);
           if (scripts) {
             res.status(200).json(scripts);
           } else {
@@ -87,17 +87,20 @@ const readScriptsByUser = (req: Request, res: Response, next: NextFunction) => {
 
 const updateScript = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.scriptId;
+  console.log(req.body);
+
   return Script.findById(id).then((script) => {
-    Logging.info(`Updating script from database: ${script}`);
     if (script) {
       script.set(req.body);
       return script
         .save()
         .then((result) => {
+          Logging.info(`Updated script from database: ${script}`);
           res.status(200).json(result);
         })
         .catch((err) => {
-          res.status(500).json({ error: err });
+          Logging.info(`Error saving the script on the DB: ${err}`);
+          res.status(200).json({ error: err });
         });
     } else {
       res.status(404).json({ message: "No valid entry found for provided ID" });
@@ -109,7 +112,7 @@ const deleteScript = (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.scriptId;
   return Script.findByIdAndDelete(id)
     .then((script) => {
-      Logging.info(`Deleting script from database: ${script}`);
+      Logging.info(`Deleting script from database: ${id}`);
       if (script) {
         res.status(201).json({ message: "Script deleted" });
       } else {

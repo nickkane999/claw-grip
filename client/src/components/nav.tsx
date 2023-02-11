@@ -10,7 +10,6 @@ function nav() {
 
   useEffect(() => {
     const isLoggedIn = getCookie("loginInfo");
-    console.log("isLoggedIn from effect", isLoggedIn);
     isLoggedIn ? setIsLoggedIn(true) : setIsLoggedIn(false);
   }, [isLoggedIn]);
 
@@ -33,6 +32,9 @@ function nav() {
         </li>
         <li>
           <Link href="/scripts">Scripts</Link>
+        </li>
+        <li>
+          <Link href="/users">Users</Link>
         </li>
         {isLoggedIn ? (
           <>
