@@ -114,9 +114,9 @@ const deleteScript = (req: Request, res: Response, next: NextFunction) => {
     .then((script) => {
       Logging.info(`Deleting script from database: ${id}`);
       if (script) {
-        res.status(201).json({ message: "Script deleted" });
+        res.status(201).json({ message: "Script deleted", deletedScript: true });
       } else {
-        res.status(404).json({ message: "No valid entry found for provided ID" });
+        res.status(404).json({ message: "No valid entry found for provided ID", deletedScript: false });
       }
     })
     .catch((err) => {

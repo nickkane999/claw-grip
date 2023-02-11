@@ -177,10 +177,6 @@ class ClawGrip {
     return { browser, page, result: json };
   }
 }
-type PuppeteerInfoInput = {
-  browser: Browser;
-  page: Page;
-};
 type PuppeteerInfoOutput = {
   browser: Browser;
   page: Page;
@@ -207,4 +203,4 @@ const process = async (req: Request, res: Response, next: NextFunction) => {
   return res.status(404).json({ result: results });
 };
 
-export default process;
+export default ClawGrip;

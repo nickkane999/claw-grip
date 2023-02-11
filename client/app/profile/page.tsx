@@ -37,6 +37,7 @@ function Page() {
       console.log(JSON.parse(value));
     } catch (e) {
       setStatus("Invalid JSON");
+      return;
     }
     const res = await fetch(`http://localhost:5000/scripts/update/${scriptId}`, {
       method: "PATCH",
@@ -48,12 +49,19 @@ function Page() {
     const result = await res.json();
     setStatus("Updated JSON");
     console.log(result);
-    return true;
   };
 
   const deleteScript = async (scriptId: string) => {
-    console.log("script ID", scriptId);
-    return true;
+    const res = await fetch(`http://localhost:5000/scripts/delete/${scriptId}`, { method: "DELETE" });
+    const result = await res.json();
+    if (result.deletedScript) {
+      setStatus("Deleted Script");
+      let script = document.querySelector(".script-" + scriptId);
+      script && script.remove();
+    } else {
+      setStatus("Error deleting script");
+    }
+    console.log(result);
   };
 
   const { Control, Label, Group } = Form;
@@ -67,7 +75,7 @@ function Page() {
           <p className="status">{status}</p>
           {userScripts.map((script: any, i: number) => {
             return (
-              <Col key={script._id} xs={6}>
+              <Col key={script._id} xs={6} className={`script-${i}`}>
                 <h2>{script.name}</h2>
                 <p>Created Date: {formattedDate(script.createdAt)}</p>
                 <p>Updated Date: {formattedDate(script.updatedAt)}</p>
