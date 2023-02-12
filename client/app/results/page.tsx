@@ -1,18 +1,26 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import SelectScript from "./SelectScript";
 import { getCookie } from "../../src/util/cookies";
 import { formattedDate } from "../../src/util/general";
+import "./page.scss";
 
 function Page() {
   const [userScripts, setUserScripts] = useState([]);
   const [status, setStatus] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState({} as any);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const isLoggedIn = getCookie("loginInfo");
+    isLoggedIn ? setIsLoggedIn(isLoggedIn) : setIsLoggedIn(false);
+  }, [isLoggedIn]);
 
   const testScript = async () => {
     setIsLoading(true);
-    let script: any = document ? document.querySelector(".my-script") : null;
+    let script: any = document ? document.querySelector(".script-textarea") : null;
     let value: string = script && script.value ? script.value : "";
     try {
       console.log(JSON.parse(value));
@@ -43,12 +51,13 @@ function Page() {
   return (
     <Container className="results">
       <h1>Results</h1>
+      {isLoggedIn ? <SelectScript userInfo={isLoggedIn} setStatus={setStatus} /> : null}
       <p className="status">{status}</p>
       <Col>
-        <Control as="textarea" rows={10} className="my-script" />
+        <Control as="textarea" rows={10} className="script-textarea" />
       </Col>
 
-      <button onClick={testScript}>Test</button>
+      <Button onClick={testScript}>Test</Button>
       <h2>Test results:</h2>
       {isLoading ? <p>Loading...</p> : null}
       <p className="test-results"></p>
