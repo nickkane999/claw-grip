@@ -1,36 +1,96 @@
-import React from "react";
-import { notFound } from "next/navigation";
-import Link from "next/link";
+"use client";
 
-const getUsers = async () => {
-  const res = await fetch(`http://localhost:5000/users/get`, { next: { revalidate: 300 } });
+import React, { useState, useEffect } from "react";
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { getCookie } from "../../src/util/cookies";
+import { formattedDate } from "../../src/util/general";
+import "./page.scss";
 
-  //const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, { cache: "no-cache" });
-  //const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, { cache: "force-cache" });
+const getUserScripts = async (userId: string) => {
+  const res = await fetch(`http://localhost:5000/scripts/get/user/${userId}`, { next: { revalidate: 100 } });
   const user = await res.json();
   return user;
 };
 
-async function Page() {
-  let id = "63dfbae7543add2e09c9b9db";
-  let user = await getUsers();
-  console.log(user);
+function Page() {
+  const [userScripts, setUserScripts] = useState([]);
+  const [status, setStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState({} as any);
 
-  if (!user || Object.keys(user).length < 1) {
-    return notFound();
-  }
+  useEffect(() => {
+    const isLoggedIn: any = JSON.parse(getCookie("loginInfo") as any);
+    if (isLoggedIn && isLoggedIn.userData && isLoggedIn.userData._id) {
+      setIsLoading(true);
+      getUserScripts(isLoggedIn.userData._id).then((scripts) => {
+        setUserData(isLoggedIn.userData);
+        setUserScripts(scripts);
+        setIsLoading(false);
+      });
+    }
+  }, []);
 
+  const updateScript = async (scriptId: string, i: number) => {
+    let script: any = document ? document.querySelector(".script-json-" + i) : null;
+    let value: string = script && script.value ? script.value : "";
+    try {
+      console.log(JSON.parse(value));
+    } catch (e) {
+      setStatus("Invalid JSON");
+      return;
+    }
+    const res = await fetch(`http://localhost:5000/scripts/update/${scriptId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        script: value,
+      }),
+    });
+    const result = await res.json();
+    setStatus("Updated JSON");
+    console.log(result);
+  };
+
+  const deleteScript = async (scriptId: string) => {
+    const res = await fetch(`http://localhost:5000/scripts/delete/${scriptId}`, { method: "DELETE" });
+    const result = await res.json();
+    if (result.deletedScript) {
+      setStatus("Deleted Script");
+      let script = document.querySelector(".script-" + scriptId);
+      script && script.remove();
+    } else {
+      setStatus("Error deleting script");
+    }
+    console.log(result);
+  };
+
+  const { Control, Label, Group } = Form;
   return (
-    <div className="profile">
-      <h1>Users</h1>
-      {user.map((user: any) => {
-        return (
-          <div key={user._id}>
-            <Link href={`/profile/${user._id}`}>{user.username}</Link>
-          </div>
-        );
-      })}
-    </div>
+    <Container className="profile">
+      {isLoading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <Row>
+          <h1>{userData.username}</h1>
+          <p className="status">{status}</p>
+          {userScripts.map((script: any, i: number) => {
+            return (
+              <Col key={script._id} xs={6} className={`script-${i}`}>
+                <h2>{script.name}</h2>
+                <p>Created Date: {formattedDate(script.createdAt)}</p>
+                <p>Updated Date: {formattedDate(script.updatedAt)}</p>
+                <Group>
+                  <Label>Modify JSON Script</Label>
+                  <Control className={"script-json-" + i} as="textarea" rows={10} placeholder="Chart progress" name={"script-json-" + i} defaultValue={script.script} />
+                  <Button onClick={() => updateScript(script._id, i)}>Update</Button>
+                  <Button onClick={() => deleteScript(script._id)}>Delete</Button>
+                </Group>
+              </Col>
+            );
+          })}
+        </Row>
+      )}
+    </Container>
   );
 }
 

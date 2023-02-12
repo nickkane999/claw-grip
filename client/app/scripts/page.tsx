@@ -10,14 +10,13 @@ const getScripts = async () => {
 
 async function Page() {
   let scripts = await getScripts();
-  console.log(scripts);
 
   if (!scripts || Object.keys(scripts).length < 1) {
     return notFound();
   }
 
   return (
-    <div className="scripts">
+    <div className="scripts container">
       <h1>Scripts</h1>
       {scripts.map((script: any) => {
         return (

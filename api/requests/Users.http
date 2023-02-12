@@ -1,0 +1,23 @@
+// User Requests
+
+GET http://localhost:5000/users/get
+GET http://localhost:5000/users/get/63dfbae7543add2e09c9b9db
+DELETE http://localhost:5000/users/delete/63e5babe3877f9788cba94a1
+
+
+POST http://localhost:5000/users/create
+Content-Type: application/json
+
+{
+    "username": "nickkane9",
+    "password": "nickkane9",
+    "confirmPassword": "nickkane9"
+}
+
+PATCH http://localhost:5000/users/update/63e30b48980020010bfa33fc
+Content-Type: application/json
+
+{
+    "username": "nickkane99"
+}
+

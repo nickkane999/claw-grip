@@ -24,7 +24,7 @@ async function Page({ params: { id } }: any) {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1>{user.username}</h1>
       <h2>Scripts</h2>
       {scripts.length >= 1 ? (

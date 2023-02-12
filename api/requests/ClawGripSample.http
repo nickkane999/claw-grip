@@ -1,0 +1,17 @@
+GET http://localhost:5000/puppeteer/process
+Content-Type: application/json
+
+{
+    "actions": [
+        {
+            "url": "https://stackoverflow.com/questions/46204003/trigger-click-in-typescript-property-click-does-not-exist-on-type-element",
+            "selector": "a[href='/questions/ask']",
+            "type": "selectButton"
+        },
+        {
+            "url": null,
+            "selector": ".val-textemphasis",
+            "type": "pullText"
+        }
+    ]
+}
